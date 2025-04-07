@@ -5,7 +5,11 @@ Following TDD principles, these tests define the expected behavior of the event 
 before any implementation is written.
 """
 import pytest
-from unittest.mock import Mock
+from unittest.mock import Mock, patch, MagicMock
+import asyncio
+import time
+import threading
+from datetime import datetime
 
 # Import the components that we will eventually create
 # These imports will fail initially (red phase)
@@ -88,7 +92,9 @@ class TestEventListener:
     
     def test_listener_registration(self):
         """Test that a listener can be created with event types"""
-        listener = EventListener("test_listener", [EventType.MARKET_DATA, EventType.TRADE_UPDATE])
+        listener = EventListener(
+            "test_listener", [EventType.MARKET_DATA, EventType.TRADE_UPDATE]
+        )
         
         assert listener.name == "test_listener"
         assert EventType.MARKET_DATA in listener.event_types
@@ -175,7 +181,6 @@ class TestEventEngine:
         engine.start()
         
         # Give it a moment to process (in a real test, we would use proper synchronization)
-        import time
         time.sleep(0.1)
         
         # Stop the engine
@@ -233,7 +238,6 @@ class TestEventEngine:
         engine.start()
         
         # Give it a moment to process
-        import time
         time.sleep(0.1)
         
         # Stop the engine
@@ -277,7 +281,6 @@ class TestEventEngine:
         engine.start()
         
         # Give it a moment to process
-        import time
         time.sleep(0.1)
         
         # Stop the engine
