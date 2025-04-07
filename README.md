@@ -16,54 +16,91 @@ This project strictly follows Test-Driven Development (TDD) principles:
 4. Refactor while maintaining passing tests (refactor phase)
 5. Verify all tests pass before proceeding to the next component
 
-## Project Phases
+## Project Structure
+
+```
+liquid-energy/
+├── docs/
+│   ├── components/      # Component documentation
+│   ├── refactoring/     # Refactoring recommendations
+│   └── requirements/    # Detailed requirements
+├── src/
+│   └── liquid_energy/
+│       ├── core/        # Core components 
+│       ├── ml/          # Machine learning components
+│       ├── rl/          # Reinforcement learning components
+│       └── strategies/  # Trading strategies
+└── tests/
+    ├── unit/            # Unit tests
+    └── integration/     # Integration tests
+```
+
+## Development Progress
 
 ### Phase 1: Foundational Architecture
-- Core event-driven architecture
-- Hummingbot API integration
-- Energy market data connectivity
-- Base market making strategy framework
-- Configuration system
-- Logging and monitoring capabilities
 
-### Phase 2: ML Component Development
-- Price prediction models for multiple time horizons
-- Anomaly detection for market conditions
-- Energy market-specific feature engineering
-- Model training and deployment pipeline
-- Technical indicators integration
+| Component | Requirements | Tests | Implementation | Refactoring | Documentation | Status |
+|-----------|:------------:|:-----:|:--------------:|:-----------:|:-------------:|:------:|
+| Core Event System | ✅ | ✅ | ✅ | ✅ | ✅ | Complete |
+| Hummingbot API Integration | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
+| Energy Market Data Connectivity | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
+| Base Market Making Strategy | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
+| Configuration System | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
+| Logging and Monitoring | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
 
-### Phase 3: RL Strategy Implementation
-- Reinforcement learning environment for energy markets
-- DDPG and SAC agent implementations
-- Reward function design
-- Experience replay mechanism
-- Parameter optimization
+### Phases 2-6
 
-### Phase 4: Advanced Market Making Strategies
-- ML-Enhanced Market Making strategy
-- RL-Enhanced Market Making strategy
-- Dynamic parameter adjustment
-- Risk-aware decision making
-- Strategy adaptation for anomalous conditions
-
-### Phase 5: Backtesting and Evaluation
-- Comprehensive backtesting framework
-- Performance metrics for energy market making
-- Strategy comparison methodology
-- Risk analysis and drawdown assessment
-- Parameter sensitivity analysis
-
-### Phase 6: Deployment and Operation
-- Production deployment architecture
-- Monitoring and alerting systems
-- Fail-safe mechanisms
-- Performance optimization
-- Regulatory compliance safeguards
+Pending completion of Phase 1.
 
 ## Getting Started
 
-*Documentation will be expanded as the project develops*
+### Prerequisites
+
+- Python 3.8+
+- Hummingbot framework
+- Required Python packages (see requirements.txt)
+
+### Installation
+
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/llamle/liquid-energy.git
+   cd liquid-energy
+   ```
+
+2. Create and activate a virtual environment:
+   ```bash
+   python -m venv venv
+   source venv/bin/activate  # On Windows: venv\Scripts\activate
+   ```
+
+3. Install the package in development mode:
+   ```bash
+   pip install -e .
+   ```
+
+4. Run the tests:
+   ```bash
+   pytest
+   ```
+
+## Core Components
+
+### Event-Driven Architecture
+
+The event-driven architecture is the foundation of the Liquid Energy trading system. It enables decoupled components to communicate through events, providing a flexible and extensible framework for market data processing, strategy execution, and trade management.
+
+Learn more in [Event System Documentation](docs/components/event_system.md).
+
+## Contributing
+
+To contribute to this project:
+
+1. Make sure all changes follow the TDD approach
+2. Write tests before implementation
+3. Ensure all tests pass
+4. Follow the refactoring recommendations
+5. Document your components
 
 ## License
 
