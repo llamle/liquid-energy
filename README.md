@@ -46,7 +46,7 @@ liquid-energy/
 | Component | Requirements | Tests | Implementation | Refactoring | Documentation | Status |
 |-----------|:------------:|:-----:|:--------------:|:-----------:|:-------------:|:------:|
 | Core Event System | ✅ | ✅ | ✅ | ✅ | ✅ | Complete |
-| Hummingbot API Integration | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
+| Hummingbot API Integration | ✅ | ✅ | ✅ | ✅ | ✅ | Complete |
 | Energy Market Data Connectivity | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
 | Base Market Making Strategy | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
 | Configuration System | 🔜 | 🔜 | 🔜 | 🔜 | 🔜 | Pending |
@@ -95,6 +95,12 @@ Pending completion of Phase 1.
 The event-driven architecture is the foundation of the Liquid Energy trading system. It enables decoupled components to communicate through events, providing a flexible and extensible framework for market data processing, strategy execution, and trade management.
 
 Learn more in [Event System Documentation](docs/components/event_system.md).
+
+### Hummingbot API Integration
+
+The Hummingbot client provides a robust interface for executing trades and accessing market data through the Hummingbot trading engine. By integrating with the event-driven architecture, it enables building sophisticated trading strategies that can respond to real-time market conditions.
+
+Learn more in [Hummingbot Client Documentation](docs/components/hummingbot_client.md).
 
 ## CI/CD Pipeline
 
