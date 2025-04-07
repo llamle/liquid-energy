@@ -26,6 +26,8 @@ from liquid_energy.core.hummingbot_client import (
 
 from liquid_energy.core.event_system import EventEngine, Event, EventType
 
+# Mark all tests in this module as asyncio tests
+pytestmark = pytest.mark.asyncio
 
 class TestHummingbotClientInit:
     """Tests for HummingbotClient initialization and configuration"""
@@ -120,7 +122,6 @@ class TestHummingbotClientConnection:
             api_key="test_api_key"
         )
     
-    @pytest.mark.asyncio
     async def test_connect_success(self, client, mock_websocket):
         """Test successful connection to Hummingbot"""
         with patch('websockets.connect', return_value=mock_websocket):
@@ -134,7 +135,6 @@ class TestHummingbotClientConnection:
             assert auth_message["type"] == "authenticate"
             assert auth_message["api_key"] == "test_api_key"
     
-    @pytest.mark.asyncio
     async def test_connect_failure_auth(self, client, mock_websocket):
         """Test failed authentication during connection"""
         # Mock authentication failure response
@@ -149,7 +149,6 @@ class TestHummingbotClientConnection:
             
             assert client.connection_status == ConnectionStatus.DISCONNECTED
     
-    @pytest.mark.asyncio
     async def test_connect_failure_connection(self, client):
         """Test connection failure"""
         with patch('websockets.connect', side_effect=Exception("Connection failed")):
@@ -158,7 +157,6 @@ class TestHummingbotClientConnection:
             
             assert client.connection_status == ConnectionStatus.DISCONNECTED
     
-    @pytest.mark.asyncio
     async def test_disconnect(self, client, mock_websocket):
         """Test disconnection from Hummingbot"""
         # Set up connected state
@@ -193,7 +191,6 @@ class TestHummingbotClientOrders:
         client._ws.recv = AsyncMock(return_value=json.dumps({"status": "success"}))
         return client
     
-    @pytest.mark.asyncio
     async def test_create_limit_order(self, client):
         """Test creating a limit order"""
         # Setup successful order response
@@ -241,7 +238,6 @@ class TestHummingbotClientOrders:
         assert order_event_call.type == EventType.ORDER_UPDATE
         assert order_event_call.data["order_id"] == order_id
     
-    @pytest.mark.asyncio
     async def test_create_market_order(self, client):
         """Test creating a market order"""
         # Setup successful order response
@@ -288,7 +284,6 @@ class TestHummingbotClientOrders:
         assert order_event_call.type == EventType.ORDER_UPDATE
         assert order_event_call.data["order_id"] == order_id
     
-    @pytest.mark.asyncio
     async def test_create_order_error(self, client):
         """Test error handling when creating an order"""
         # Setup error response
@@ -313,7 +308,6 @@ class TestHummingbotClientOrders:
         error_event_call = client.event_engine.put.call_args[0][0]
         assert error_event_call.type == EventType.ERROR
     
-    @pytest.mark.asyncio
     async def test_cancel_order(self, client):
         """Test cancelling an order"""
         order_id = str(uuid.uuid4())
@@ -348,7 +342,6 @@ class TestHummingbotClientOrders:
         assert cancel_event_call.data["order_id"] == order_id
         assert cancel_event_call.data["status"] == "cancelled"
     
-    @pytest.mark.asyncio
     async def test_get_order_status(self, client):
         """Test getting order status"""
         order_id = str(uuid.uuid4())
@@ -407,7 +400,6 @@ class TestHummingbotClientMarketData:
         client._ws.recv = AsyncMock(return_value=json.dumps({"status": "success"}))
         return client
     
-    @pytest.mark.asyncio
     async def test_get_order_book(self, client):
         """Test getting order book data"""
         # Setup successful response with order book data
@@ -448,7 +440,6 @@ class TestHummingbotClientMarketData:
         assert float(result["bids"][0][0]) == 3000.0  # Price
         assert float(result["bids"][0][1]) == 1.5     # Amount
     
-    @pytest.mark.asyncio
     async def test_get_ticker(self, client):
         """Test getting ticker data"""
         # Setup successful response with ticker data
@@ -483,7 +474,6 @@ class TestHummingbotClientMarketData:
         assert float(result["last"]) == 3000.5
         assert float(result["volume"]) == 1000.0
     
-    @pytest.mark.asyncio
     async def test_subscribe_to_order_book(self, client):
         """Test subscribing to order book updates"""
         # Setup successful subscription response
@@ -508,7 +498,6 @@ class TestHummingbotClientMarketData:
         assert result["status"] == "success"
         assert "Subscribed to order book" in result["message"]
     
-    @pytest.mark.asyncio
     async def test_subscribe_to_trades(self, client):
         """Test subscribing to trade updates"""
         # Setup successful subscription response
@@ -554,7 +543,6 @@ class TestHummingbotClientAccountData:
         client._ws.recv = AsyncMock(return_value=json.dumps({"status": "success"}))
         return client
     
-    @pytest.mark.asyncio
     async def test_get_balances(self, client):
         """Test getting account balances"""
         # Setup successful response with balance data
@@ -590,7 +578,6 @@ class TestHummingbotClientAccountData:
         assert float(result["binance"]["USD"]["total"]) == 50000.0
         assert float(result["binance"]["USD"]["available"]) == 45000.0
     
-    @pytest.mark.asyncio
     async def test_get_open_orders(self, client):
         """Test getting open orders"""
         # Setup successful response with open orders data
@@ -632,7 +619,6 @@ class TestHummingbotClientAccountData:
         assert float(result[0]["price"]) == 3000.0
         assert float(result[0]["amount"]) == 1.0
     
-    @pytest.mark.asyncio
     async def test_get_order_history(self, client):
         """Test getting order history"""
         # Setup successful response with order history data
