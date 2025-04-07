@@ -80,7 +80,7 @@ Pending completion of Phase 1.
 
 3. Install the package in development mode:
    ```bash
-   pip install -e .
+   pip install -e ".[test,dev]"
    ```
 
 4. Run the tests:
@@ -110,7 +110,9 @@ Liquid Energy employs a comprehensive CI/CD pipeline to ensure code quality and 
 - **Continuous Deployment**: Automated release and publishing process when version tags are pushed
 - **Dependency Updates**: Weekly automated dependency updates to maintain security and compatibility
 
-For more details, see [CI/CD Process Documentation](docs/development/ci_cd_process.md).
+For more details, see:
+- [CI/CD Process Documentation](docs/development/ci_cd_process.md)
+- [CI Pipeline Fixes](docs/development/ci_fixes.md)
 
 ## Contributing
 
