@@ -9,11 +9,11 @@ import asyncio
 import enum
 import json
 import logging
-import uuid
 from datetime import datetime
-from typing import Dict, List, Optional, Any, Union, Tuple
+from typing import Dict, List, Optional, Any, Union, Tuple, cast
 
 import websockets
+from websockets.client import WebSocketClientProtocol
 
 from liquid_energy.core.event_system import EventEngine, Event, EventType
 
@@ -143,10 +143,10 @@ class HummingbotClient:
         
         # Connection state
         self.connection_status = ConnectionStatus.DISCONNECTED
-        self._ws = None
+        self._ws: Optional[WebSocketClientProtocol] = None
         self._message_id = 0
-        self._pending_requests = {}
-        self._event_processor_task = None
+        self._pending_requests: Dict[str, asyncio.Future] = {}
+        self._event_processor_task: Optional[asyncio.Task] = None
     
     async def connect(self) -> None:
         """
@@ -174,7 +174,9 @@ class HummingbotClient:
             
             if auth_response.get("status") != "success":
                 error_msg = auth_response.get("message", "Authentication failed")
-                raise HummingbotClientException(f"Hummingbot authentication failed: {error_msg}")
+                raise HummingbotClientException(
+                    f"Hummingbot authentication failed: {error_msg}"
+                )
             
             # Start event processor
             self.connection_status = ConnectionStatus.CONNECTED
@@ -185,7 +187,9 @@ class HummingbotClient:
         except Exception as e:
             self.connection_status = ConnectionStatus.ERROR
             await self._cleanup()
-            raise HummingbotClientException(f"Failed to connect to Hummingbot: {str(e)}")
+            raise HummingbotClientException(
+                f"Failed to connect to Hummingbot: {str(e)}"
+            )
     
     async def disconnect(self) -> None:
         """
@@ -241,7 +245,7 @@ class HummingbotClient:
         request_json = json.dumps(request)
         
         # Set up future for the response
-        response_future = asyncio.Future()
+        response_future: asyncio.Future = asyncio.Future()
         self._pending_requests[request_id] = response_future
         
         try:
@@ -254,10 +258,12 @@ class HummingbotClient:
                 timeout=self.request_timeout
             )
             
-            return response
+            return cast(Dict[str, Any], response)
             
         except asyncio.TimeoutError:
-            raise HummingbotClientException(f"Request timed out after {self.request_timeout} seconds")
+            raise HummingbotClientException(
+                f"Request timed out after {self.request_timeout} seconds"
+            )
         except Exception as e:
             raise HummingbotClientException(f"Request failed: {str(e)}")
         finally:
@@ -382,7 +388,7 @@ class HummingbotClient:
             raise ValueError("Price is required for limit orders")
         
         # Prepare request
-        request = {
+        request: Dict[str, Any] = {
             "type": "create_order",
             "exchange": exchange,
             "market": market,
@@ -418,7 +424,10 @@ class HummingbotClient:
             self.event_engine.put(Event(
                 EventType.ERROR,
                 {
-                    "message": f"Failed to create {order_type} {side} order for {market} on {exchange}",
+                    "message": (
+                        f"Failed to create {order_type} {side} order " +
+                        f"for {market} on {exchange}"
+                    ),
                     "exchange": exchange,
                     "market": market
                 },
@@ -482,7 +491,10 @@ class HummingbotClient:
             self.event_engine.put(Event(
                 EventType.ERROR,
                 {
-                    "message": f"Failed to cancel order {order_id} for {market} on {exchange}",
+                    "message": (
+                        f"Failed to cancel order {order_id} " +
+                        f"for {market} on {exchange}"
+                    ),
                     "exchange": exchange,
                     "market": market,
                     "order_id": order_id
@@ -626,7 +638,9 @@ class HummingbotClient:
         
         if response.get("status") != "success":
             error_msg = response.get("message", "Unknown error")
-            raise HummingbotClientException(f"Failed to subscribe to order book: {error_msg}")
+            raise HummingbotClientException(
+                f"Failed to subscribe to order book: {error_msg}"
+            )
         
         return response
     
@@ -660,7 +674,9 @@ class HummingbotClient:
         
         if response.get("status") != "success":
             error_msg = response.get("message", "Unknown error")
-            raise HummingbotClientException(f"Failed to subscribe to trades: {error_msg}")
+            raise HummingbotClientException(
+                f"Failed to subscribe to trades: {error_msg}"
+            )
         
         return response
     
