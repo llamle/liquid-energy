@@ -1,0 +1,66 @@
+name: Continuous Deployment
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install build twine
+    
+    - name: Build package
+      run: |
+        python -m build
+    
+    - name: Publish package to PyPI
+      if: startsWith(github.ref, 'refs/tags/')
+      uses: pypa/gh-action-pypi-publish@release/v1
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
+        skip_existing: true
+
+  create-release:
+    needs: build-and-publish
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    
+    - name: Get version from tag
+      id: get_version
+      run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+    
+    - name: Generate changelog
+      id: changelog
+      run: |
+        PREV_TAG=$(git describe --tags --abbrev=0 HEAD^ 2>/dev/null || echo "")
+        if [ -z "$PREV_TAG" ]; then
+          git log --pretty=format:"* %s (%h)" > CHANGELOG.md
+        else
+          git log --pretty=format:"* %s (%h)" ${PREV_TAG}..HEAD > CHANGELOG.md
+        fi
+        echo "CHANGELOG_PATH=CHANGELOG.md" >> $GITHUB_OUTPUT
+    
+    - name: Create GitHub Release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ steps.get_version.outputs.VERSION }}
+        body_path: ${{ steps.changelog.outputs.CHANGELOG_PATH }}
